@@ -81,4 +81,27 @@ Thread.removeThread = (id, result) => {
   });
 };
 
+Thread.updateThreadById = (id, thread, result) => {
+  sql.query(
+    "UPDATE threads SET title = ?, content = ? WHERE id = ?",
+    [thread.title, thread.content, id],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found Thread with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated thread: ", { id: id, ...thread });
+      result(null, { id: id, ...thread });
+    }
+  );
+};
+
 module.exports = Thread;

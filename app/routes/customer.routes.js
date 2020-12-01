@@ -3,6 +3,7 @@ module.exports = (app) => {
 
   const categories = require("../controllers/category.controller.js");
   const threads = require("../controllers/thread.controller.js");
+  const posts = require("../controllers/post.controller.js");
 
   // Retrieve all categories
   app.get("/categories", categories.findAll);
@@ -19,8 +20,29 @@ module.exports = (app) => {
   // Retrieve single thread
   app.get("/threads/single/:threadId", threads.findSingleThread);
 
-  // Delete a Thread with thradId
+  // Delete a Thread with threadId
   app.delete("/threads/single/:threadId", threads.deleteThread);
+
+  // Update a Thread with threadId
+  app.put("/threads/single/:threadId", threads.updateThread);
+
+  // Create a new Post
+  app.post("/posts", posts.createPost);
+
+  // Retrieve all posts
+  app.get("/posts", posts.findAllPosts);
+
+  // Retrieve a single post by id
+  app.get("/posts/:postId", posts.findSinglePost);
+
+  // Retrieve posts from a single thread by threadId
+  app.get("/threads/:threadId/posts", posts.findPostsFromThread);
+
+  // Delete a Thread with threadId
+  app.delete("/posts/:postId", posts.deletePost);
+
+  // Update a Thread with threadId
+  app.put("/posts/:postId", posts.updatePost);
 
   // Create a new Customer
   app.post("/customers", customers.create);

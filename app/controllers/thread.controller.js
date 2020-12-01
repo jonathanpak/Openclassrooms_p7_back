@@ -44,7 +44,7 @@ exports.createThread = (req, res) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Customer.",
+          err.message || "Some error occurred while creating the Thread.",
       });
     else res.send(data);
   });
@@ -74,5 +74,28 @@ exports.deleteThread = (req, res) => {
         });
       }
     } else res.send({ message: `Thread was deleted successfully!` });
+  });
+};
+
+exports.updateThread = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+
+  Thread.updateThreadById(req.params.threadId, req.body, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Thread with id ${req.params.threadId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error updating Thread with id " + req.params.threadId,
+        });
+      }
+    } else res.send(data);
   });
 };
