@@ -27,7 +27,6 @@ const db = require("./app/models");
 db.sequelize.sync();
 
 // ADD ROUTES HERE
-require("./app/routes/customer.routes.js")(app);
 require("./app/routes/thread.routes.js")(app);
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);

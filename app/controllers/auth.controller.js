@@ -87,7 +87,7 @@ exports.signin = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  const id = req.body.id;
+  const id = req.params.userId;
 
   // CHECK IF ID = USER ID from token
   User.destroy({

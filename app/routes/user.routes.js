@@ -27,5 +27,10 @@ module.exports = function (app) {
     controller.adminBoard
   );
 
-  app.delete("/api/auth/delete", [authJwt.verifyToken], authController.delete);
+  // Delete User with userId
+  app.delete(
+    "/api/auth/delete/:userId",
+    [authJwt.verifyToken],
+    authController.delete
+  );
 };
