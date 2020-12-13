@@ -72,7 +72,6 @@ Thread.removeThread = (id, result) => {
     }
 
     if (res.length == 0) {
-      // not found thread with the id
       result({ kind: "not_found" }, null);
       return;
     }
@@ -98,7 +97,6 @@ Thread.updateThreadById = (id, thread, result) => {
       }
 
       if (res.length == 0) {
-        // not found Thread with the id
         result({ kind: "not_found" }, null);
         return;
       }
@@ -121,7 +119,6 @@ Thread.getLikesFromThread = (threadId, result) => {
       }
 
       if (res.length == 0) {
-        // not found Thread with the id
         result({ kind: "not_found" }, null);
         return;
       }
@@ -145,7 +142,6 @@ Thread.manageLikeOfThread = (userId, threadId, result) => {
       }
 
       if (res.length == 0) {
-        // not found Thread with the id
         result({ kind: "not_found" }, null);
         return;
       }

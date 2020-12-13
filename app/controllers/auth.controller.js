@@ -48,7 +48,7 @@ exports.signin = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).send({ message: "Combinaison incorrecte." });
       }
 
       var passwordIsValid = bcrypt.compareSync(
@@ -59,7 +59,7 @@ exports.signin = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!",
+          message: "Combinaison incorrecte.",
         });
       }
 
@@ -87,11 +87,8 @@ exports.signin = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  const id = req.params.userId;
-
-  // CHECK IF ID = USER ID from token
   User.destroy({
-    where: { id: id },
+    where: { id: req.userId },
   })
     .then((num) => {
       if (num == 1) {

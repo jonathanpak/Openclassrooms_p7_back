@@ -68,7 +68,6 @@ Post.removePost = (id, result) => {
     }
 
     if (res.length == 0) {
-      // not found post with the id
       result({ kind: "not_found" }, null);
       return;
     }
@@ -90,7 +89,6 @@ Post.updatePostById = (id, post, result) => {
       }
 
       if (res.length == 0) {
-        // not found Post with the id
         result({ kind: "not_found" }, null);
         return;
       }
@@ -130,7 +128,6 @@ Post.manageLikeOfPost = (userId, postId, result) => {
       }
 
       if (res.length == 0) {
-        // not found Thread with the id
         result({ kind: "not_found" }, null);
         return;
       }
