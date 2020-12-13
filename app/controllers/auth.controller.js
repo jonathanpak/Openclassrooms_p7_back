@@ -112,7 +112,7 @@ exports.delete = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  const id = req.params.id;
+  const id = req.params.userId;
 
   User.update(req.body, {
     where: { id: id },
@@ -132,5 +132,47 @@ exports.update = (req, res) => {
       res.status(500).send({
         message: "Error updating User with id=" + id,
       });
+    });
+};
+
+exports.findSingleUser = (req, res) => {
+  User.findOne({
+    where: {
+      username: req.params.username,
+    },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+
+      res.status(200).send({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        imageUrl: user.imageUrl,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.findSingleUserById = (req, res) => {
+  User.findByPk(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+
+      res.status(200).send({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        imageUrl: user.imageUrl,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
     });
 };

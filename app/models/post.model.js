@@ -7,6 +7,7 @@ const Post = function (post) {
   this.content = post.content;
   this.dateCreated = post.dateCreated;
   this.threadId = post.threadId;
+  this.usersLike = 0;
 };
 
 Post.createPost = (newPost, result) => {
@@ -66,7 +67,7 @@ Post.removePost = (id, result) => {
       return;
     }
 
-    if (res.affectedRows == 0) {
+    if (res.length == 0) {
       // not found post with the id
       result({ kind: "not_found" }, null);
       return;
@@ -88,7 +89,7 @@ Post.updatePostById = (id, post, result) => {
         return;
       }
 
-      if (res.affectedRows == 0) {
+      if (res.length == 0) {
         // not found Post with the id
         result({ kind: "not_found" }, null);
         return;
@@ -96,6 +97,84 @@ Post.updatePostById = (id, post, result) => {
 
       console.log("updated post: ", { id: id, ...post });
       result(null, { id: id, ...post });
+    }
+  );
+};
+
+Post.getLikesFromPost = (postId, result) => {
+  sql.query(
+    "SELECT usersLike FROM posts WHERE id =  ? ",
+    [postId],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+      result(null, res);
+    }
+  );
+};
+
+Post.manageLikeOfPost = (userId, postId, result) => {
+  let likesArray = [];
+
+  sql.query(
+    "SELECT usersLike FROM posts WHERE id =  ? ",
+    [postId],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.length == 0) {
+        // not found Thread with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      if (res) {
+        likesArray = res[0].usersLike.split(",").map(Number);
+
+        if (likesArray.includes(userId)) {
+          const index = likesArray.indexOf(userId);
+          likesArray.splice(index, 1);
+
+          sql.query(
+            "UPDATE posts SET usersLike ='" + likesArray + "' WHERE id = ?",
+            [postId],
+            (err, res) => {
+              if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
+
+              console.log("User removed from post " + postId);
+              result(null, res);
+            }
+          );
+        } else {
+          likesArray.push(userId);
+
+          sql.query(
+            "UPDATE posts SET usersLike ='" + likesArray + "' WHERE id = ?",
+            [postId],
+            (err, res) => {
+              if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
+
+              console.log("User added to post " + postId);
+              result(null, res);
+            }
+          );
+        }
+      }
     }
   );
 };

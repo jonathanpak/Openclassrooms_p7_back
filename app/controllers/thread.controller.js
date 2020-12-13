@@ -99,3 +99,31 @@ exports.updateThread = (req, res) => {
     } else res.send(data);
   });
 };
+
+exports.getThreadLikes = (req, res) => {
+  Thread.getLikesFromThread(req.params.threadId, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while retrieving the thread likes.",
+      });
+    else res.send(data);
+  });
+};
+
+exports.manageThreadLike = (req, res) => {
+  Thread.manageLikeOfThread(req.userId, req.params.threadId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found thread with id ${req.params.threadId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error updating thread with id " + req.params.threadId,
+        });
+      }
+    } else res.send(data);
+  });
+};

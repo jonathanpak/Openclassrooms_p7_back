@@ -8,6 +8,7 @@ const Thread = function (thread) {
   this.content = thread.content;
   this.dateCreated = thread.dateCreated;
   this.categoryId = thread.categoryId;
+  this.usersLike = 0;
 };
 
 Thread.createThread = (newThread, result) => {
@@ -70,7 +71,7 @@ Thread.removeThread = (id, result) => {
       return;
     }
 
-    if (res.affectedRows == 0) {
+    if (res.length == 0) {
       // not found thread with the id
       result({ kind: "not_found" }, null);
       return;
@@ -79,6 +80,10 @@ Thread.removeThread = (id, result) => {
     console.log("deleted thread with id: ", id);
     result(null, res);
   });
+};
+
+Thread.addLikeToThread = (id, thread, result) => {
+  sql.query("UPDATE threads ");
 };
 
 Thread.updateThreadById = (id, thread, result) => {
@@ -92,7 +97,7 @@ Thread.updateThreadById = (id, thread, result) => {
         return;
       }
 
-      if (res.affectedRows == 0) {
+      if (res.length == 0) {
         // not found Thread with the id
         result({ kind: "not_found" }, null);
         return;
@@ -100,6 +105,91 @@ Thread.updateThreadById = (id, thread, result) => {
 
       console.log("updated thread: ", { id: id, ...thread });
       result(null, { id: id, ...thread });
+    }
+  );
+};
+
+Thread.getLikesFromThread = (threadId, result) => {
+  sql.query(
+    "SELECT usersLike FROM threads WHERE id =  ? ",
+    [threadId],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.length == 0) {
+        // not found Thread with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      result(null, res);
+    }
+  );
+};
+
+Thread.manageLikeOfThread = (userId, threadId, result) => {
+  let likesArray = [];
+
+  sql.query(
+    "SELECT usersLike FROM threads WHERE id =  ? ",
+    [threadId],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.length == 0) {
+        // not found Thread with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      if (res) {
+        likesArray = res[0].usersLike.split(",").map(Number);
+
+        if (likesArray.includes(userId)) {
+          const index = likesArray.indexOf(userId);
+          likesArray.splice(index, 1);
+
+          sql.query(
+            "UPDATE threads SET usersLike ='" + likesArray + "' WHERE id = ?",
+            [threadId],
+            (err, res) => {
+              if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
+
+              console.log("User removed from thread " + threadId);
+              result(null, res);
+            }
+          );
+        } else {
+          likesArray.push(userId);
+
+          sql.query(
+            "UPDATE threads SET usersLike ='" + likesArray + "' WHERE id = ?",
+            [threadId],
+            (err, res) => {
+              if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
+
+              console.log("User added to thread " + threadId);
+              result(null, res);
+            }
+          );
+        }
+      }
     }
   );
 };

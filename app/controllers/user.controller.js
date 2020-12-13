@@ -1,3 +1,5 @@
+const User = require("../models/user.model.js");
+
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
 };
@@ -14,3 +16,7 @@ exports.moderatorBoard = (req, res) => {
   res.status(200).send("Moderator Content.");
 };
 
+exports.getUserId = (req, res) => {
+  const id = req.userId;
+  res.send({ id: id });
+};

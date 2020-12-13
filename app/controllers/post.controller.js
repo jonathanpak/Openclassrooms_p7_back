@@ -97,3 +97,30 @@ exports.updatePost = (req, res) => {
     } else res.send(data);
   });
 };
+
+exports.getPostLikes = (req, res) => {
+  Post.getLikesFromPost(req.params.postId, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving the post likes.",
+      });
+    else res.send(data);
+  });
+};
+
+exports.manageLike = (req, res) => {
+  Post.manageLikeOfPost(req.userId, req.params.postId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found post with id ${req.params.postId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error updating post with id " + req.params.postId,
+        });
+      }
+    } else res.send(data);
+  });
+};
