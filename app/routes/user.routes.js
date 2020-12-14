@@ -3,22 +3,6 @@ const userController = require("../controllers/user.controller");
 const authController = require("../controllers/auth.controller");
 
 module.exports = (app) => {
-  app.get("/api/test/all", userController.allAccess);
-
-  app.get("/api/test/user", [authJwt.verifyToken], userController.userBoard);
-
-  app.get(
-    "/api/test/mod",
-    [authJwt.verifyToken, authJwt.isModerator],
-    userController.moderatorBoard
-  );
-
-  app.get(
-    "/api/test/admin",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    userController.adminBoard
-  );
-
   // Delete User
   app.delete("/api/auth/delete/", [authJwt.verifyToken], authController.delete);
 
@@ -39,3 +23,19 @@ module.exports = (app) => {
   // Retrieve currently loggedIn user
   app.get("/api/user/", [authJwt.verifyToken], userController.getUserId);
 };
+
+// app.get("/api/test/all", userController.allAccess);
+
+// app.get("/api/test/user", [authJwt.verifyToken], userController.userBoard);
+
+// app.get(
+//   "/api/test/mod",
+//   [authJwt.verifyToken, authJwt.isModerator],
+//   userController.moderatorBoard
+// );
+
+// app.get(
+//   "/api/test/admin",
+//   [authJwt.verifyToken, authJwt.isAdmin],
+//   userController.adminBoard
+// );
